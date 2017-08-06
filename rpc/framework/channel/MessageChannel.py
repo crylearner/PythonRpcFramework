@@ -44,8 +44,9 @@ class RpcMessageChannel(AbstractChannel):
         '''
         see {@inheritDoc}
         '''
+        bytesdata = self._internal_channel.recv()
         try:
-            message = self.deserializer.deserialize(self.assembler.assembleBytes(self._internal_channel.recv()))
+            message = self.deserializer.deserialize(self.assembler.assembleBytes(bytesdata))
         except Exception as e:
             RPCLog.getLogger().exception(self.__class__.__name__, str(e))
             raise ChannelDataError(str(e))

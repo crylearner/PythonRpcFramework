@@ -26,12 +26,15 @@ class InvokerHandler(AbstractMessageDriver):
         self.invoking_thread = MessageThread(target=self.__dealing_invoker, name='invoking')
         self.retrieving_thread = MessageThread(target=self.__receive_invoker, name='retrieving')
         
+        self.isrunning = False;
+        
     
     def startup(self):
         '''
         @see MessageDriver.AbstractMessageDriver#startup
         '''
         print("MessageHandler startup")
+        self.isrunning = True
         self.invoking_thread.start()
         self.retrieving_thread.start()
         
@@ -43,6 +46,7 @@ class InvokerHandler(AbstractMessageDriver):
         '''
         print("MessageHandler shutdown")
         # 必须先停止依赖的数据通道，然后才能停止发送和接收线程
+        self.isrunning = False
         self.channel.close() 
         self.invoking_thread.stopAndWait()
         self.retrieving_thread.stopAndWait()
@@ -54,6 +58,9 @@ class InvokerHandler(AbstractMessageDriver):
         <p> 这里是异步模型，仅仅将invoker放入invoker处理队列, 因此不会阻塞</p>
         @return InvokeResult
         '''
+        if not self.isrunning:
+            RPCLog.getLogger().error(self.__class__.__name__,'handler is not running yet')
+            raise HandlerStopError("try to invoke before handler run")
         try:
             self.invoking_thread.push(invoker, self.DEFAULT_TIMEOUT)
         except MessageFullError:
@@ -70,6 +77,9 @@ class InvokerHandler(AbstractMessageDriver):
         @note: 会一直阻塞，直到取到一个。如果超时，则返回None
         @return: return a message. If failed for some reason, exception will be raised
         '''
+        if not self.isrunning:
+            RPCLog.getLogger().error(self.__class__.__name__,'handler is not running yet')
+            raise HandlerStopError("try to retrieve before handler run")
         try: 
             message = self.retrieving_thread.pop(self.DEFAULT_TIMEOUT)
             return  message
@@ -82,7 +92,7 @@ class InvokerHandler(AbstractMessageDriver):
     
     
     def __dealing_invoker(self):
-        while True:
+        while self.isrunning:
             try:
                 # 不考虑超时。超时意味着暂时没有请求任务
                 invoker = self.invoking_thread.pop()
@@ -99,7 +109,7 @@ class InvokerHandler(AbstractMessageDriver):
             
             
     def __receive_invoker(self):
-        while True:
+        while self.isrunning:
             try :
                 message = self.channel.recv()
             except (ChannelBrokenError, ChannelClosedError):
@@ -120,3 +130,5 @@ class InvokerHandler(AbstractMessageDriver):
             except StopError:
                 RPCLog.getLogger().exception(self.__class__.__name__,'stop retrieving thread for exception')
                 break
+            
+        self.retrieving_thread.push(None) #FIXME:: add an empty message to avoid recv blocking
