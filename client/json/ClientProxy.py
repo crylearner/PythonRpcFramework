@@ -28,6 +28,17 @@ class ClientProxy(object):
         request.method = method
         request.params = params
         return self.session.asyncrequest(request, listener)
+    
+    def add_subscription(self, method, params, listener):
+        result = self.call(method, params)
+        sid = result.result.get("SID")
+        return self.session.add_subscription(listener, sid)
+     
+     
+    def cancel_subscription(self, method, params, listener, sid):
+        result = self.call(method, params)
+        sid = result.result.get("SID")
+        return self.session.cancel_subscription(listener, sid)
 
 if __name__ == '__main__':
     pass

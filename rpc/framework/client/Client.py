@@ -4,9 +4,6 @@ Created on 2015年8月2日
 @author: sunshyran
 '''
 
-
-import threading
-
 class AbstractClient(object):
     
     def __init__(self, invoker_handler):
@@ -33,15 +30,4 @@ class AbstractClient(object):
         '''
         self.handler.invoke(invoker)
         return None
-    
-            
-#     def listen(self, listener):
-#         return self.listener_manager.register(listener)
-#     
-#     def cancelListener(self, listener):
-#         return self.listener_manager.unregister(listener)
-#             
-#     def get_identity(self, listener):
-#         return self.listener_manager.get_identity(listener)
-#     
         

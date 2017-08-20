@@ -9,7 +9,7 @@ MSG_KEY_PARAMS = 'params'
 MSG_KEY_METHOD = 'method'
 MSG_KEY_RESULT = 'result'
 MSG_KEY_ERROR  = 'error'
-MSG_KEY_CALLBACK  = 'callback'
+MSG_KEY_CALLBACK  = 'SID'
 MSG_ENCODE     = 'UTF-8'
 
 class RpcMessage(object):

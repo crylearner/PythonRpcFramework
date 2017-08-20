@@ -74,7 +74,7 @@ class InvokerHandler(AbstractMessageDriver):
     def retrieve(self):
         '''
         \ 从retrieve队列中取出一个消息。 
-        @note: 会一直阻塞，直到取到一个。如果超时，则返回None
+        @note: 会一直阻塞，直到取到一个。如 果超时，则返回None
         @return: return a message. If failed for some reason, exception will be raised
         '''
         if not self.isrunning:

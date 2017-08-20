@@ -19,15 +19,17 @@ class ListenerManager(object):
         self.listeners = {}
         self.locker = threading.Lock()
         
-    def register(self, listener):
+    def register(self, listener, sid=None):
         with self.locker:
-            identity = id(listener)
+            identity = sid
+            if sid is None: identity = id(listener)
             self.listeners[identity] = listener
             return identity
         
-    def unregister(self, listener):
+    def unregister(self, listener, sid=None):
         with self.locker:
-            identity = id(listener)
+            identity = sid
+            if sid is None: identity = id(listener)
             self.listeners.pop(id(listener), None)
             return identity
             
