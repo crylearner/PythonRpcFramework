@@ -28,7 +28,6 @@ setup(name         = 'PythonRpcFramework',
       install_requires = [
                          ],
       packages     = find_packages(),
-      py_modules   = [".":"keywords.py"],
       include_package_data = True,
       )
 if __name__ == '__main__':

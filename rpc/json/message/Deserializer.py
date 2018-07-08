@@ -11,7 +11,7 @@ from rpc.json.message.Notification import Notification
 from rpc.json.message.Request import Request
 from rpc.json.message.Response import Response
 from rpc.json.message.RpcMessage import MSG_ENCODE, MSG_KEY_METHOD, MSG_KEY_ID, \
-    MSG_KEY_RESULT
+    MSG_KEY_RESULT, MSG_KEY_ERROR
 
 
 class Deserializer(AbstractDeserializer):
@@ -38,7 +38,7 @@ class Deserializer(AbstractDeserializer):
         elif MSG_KEY_METHOD in message and MSG_KEY_ID not in message:
             return self.deserializeNotification(message)
             
-        elif MSG_KEY_RESULT in message:
+        elif MSG_KEY_RESULT in message or MSG_KEY_ERROR in message:
             return self.deserializeResponse(message)
         
         else:

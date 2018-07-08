@@ -7,10 +7,7 @@ from concurrent.futures._base import Executor
 import threading
 import time
 
-from jsonrpc.server.SocketRPCServer import RPCServerManager
 
-
-Executor
 class HelloService():
     
     def __init__(self):
@@ -40,9 +37,3 @@ class HelloService():
                 callback('Hello, I\'m server')
             time.sleep(0.5)
             
-            
-if __name__ == '__main__':
-    server = RPCServerManager()
-    service = HelloService()
-    server.registerService(service)
-    server.start('127.0.0.1', 12345)
